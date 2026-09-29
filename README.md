@@ -33,7 +33,11 @@ BASE_URL=https://www.kubozoa.com/ pytest
 `pytest` runs the home-page smoke and primary-nav destination flows once per
 browser (Chromium, Firefox, and WebKit). Primary-nav cases cover KuboSuite™ and
 Services (via What we do), Who we are, Join us, Get in touch, and the KuboSuite™
-products overview.
+products overview. It also covers home CTA clicks (More about us, Learn more,
+Read more, View open positions, See all KuboSuite™ Products, and Get In touch)
+and a scroll-through of below-the-fold home sections, on the same three
+browsers. The Get In touch path asserts the contact form is open and usable.
+No personal data is entered, and the form is not submitted.
 
 ## Docker
 
@@ -53,7 +57,7 @@ docker run --rm -e BASE_URL=https://www.kubozoa.com/ grokbot-test-automation
 
 ## Layout
 
-- `tests/` — pytest suite and shared Playwright fixtures (`test_home_smoke.py`, `test_primary_nav.py`)
+- `tests/` — pytest suite and shared Playwright fixtures (`test_home_smoke.py`, `test_primary_nav.py`, `test_cta_scroll.py`)
 - `requirements.txt` — pinned `pytest` and `playwright`
 - `pyproject.toml` — pytest discovery plus ruff/mypy config for CI lint/typecheck
 - `Dockerfile` — container image that installs browsers and runs `pytest`

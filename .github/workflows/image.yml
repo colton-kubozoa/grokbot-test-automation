@@ -1,0 +1,43 @@
+# Stage 5: build the suite image and smoke-run a short entrypoint.
+name: Image
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: image-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  build-smoke:
+    name: build-and-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Build image or placeholder
+        run: |
+          set -euo pipefail
+          if [ ! -f Dockerfile ]; then
+            echo "No Dockerfile yet; image job is a placeholder until a Dockerfile is added."
+            exit 0
+          fi
+          docker build -t grokbot-suite:ci .
+
+      - name: Smoke entrypoint
+        run: |
+          set -euo pipefail
+          if [ ! -f Dockerfile ]; then
+            echo "No Dockerfile yet; skipping smoke."
+            exit 0
+          fi
+          docker run --rm grokbot-suite:ci \
+            python -c "import playwright; import pytest; print('smoke-ok')"

@@ -37,7 +37,14 @@ products overview. It also covers home CTA clicks (More about us, Learn more,
 Read more, View open positions, See all KuboSuite™ Products, and Get In touch)
 and a scroll-through of below-the-fold home sections, on the same three
 browsers. The Get In touch path asserts the contact form is open and usable.
-No personal data is entered, and the form is not submitted.
+No personal data is entered, and the form is not submitted. The same run opens
+the visitor-visible KuboSuite™ product entries from the products overview
+(KuboDevelop™, KuboSecure™, and KuboOperate™) and follows same-site home footer
+destinations, including Privacy Policy, on Chromium, Firefox, and WebKit.
+KuboLib™ is omitted because that block is hidden on the live site and
+`/kubosuite/kubolib/` returns not-found, so it is not a destination a visitor
+can open. Footer coverage is in-site only: third-party social profiles and
+hash-only address and email links are not followed.
 
 ## Docker
 
@@ -57,7 +64,7 @@ docker run --rm -e BASE_URL=https://www.kubozoa.com/ grokbot-test-automation
 
 ## Layout
 
-- `tests/` — pytest suite and shared Playwright fixtures (`test_home_smoke.py`, `test_primary_nav.py`, `test_cta_scroll.py`)
+- `tests/` — pytest suite and shared Playwright fixtures (`test_home_smoke.py`, `test_primary_nav.py`, `test_cta_scroll.py`, `test_kubosuite_products.py`, `test_footer_destinations.py`)
 - `requirements.txt` — pinned `pytest` and `playwright`
 - `pyproject.toml` — pytest discovery plus ruff/mypy config for CI lint/typecheck
 - `Dockerfile` — container image that installs browsers and runs `pytest`

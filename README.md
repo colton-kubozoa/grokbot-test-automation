@@ -32,8 +32,25 @@ BASE_URL=https://www.kubozoa.com/ pytest
 
 The home-page smoke runs once per browser: Chromium, Firefox, and WebKit.
 
+## Docker
+
+The `Dockerfile` uses the official Playwright Python image, installs pinned deps and
+browsers, and defaults to `pytest`.
+
+```bash
+docker build -t grokbot-test-automation .
+docker run --rm grokbot-test-automation
+```
+
+Override the target site:
+
+```bash
+docker run --rm -e BASE_URL=https://www.kubozoa.com/ grokbot-test-automation
+```
+
 ## Layout
 
 - `tests/` — pytest suite and shared Playwright fixtures
 - `requirements.txt` — pinned `pytest` and `playwright`
 - `pyproject.toml` — pytest discovery plus ruff/mypy config for CI lint/typecheck
+- `Dockerfile` — container image that installs browsers and runs `pytest`

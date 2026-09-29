@@ -1,8 +1,9 @@
 """KuboSuite product entries opened from the home page (Issue #6).
 
-KuboDevelop, KuboSecure, and KuboOperate are separate pages. The overview links
-KuboLib to /kubosuite/kubolib/, which is the public not-found page, so that
-entry is asserted as the overview section that actually renders it.
+The visitor-visible overview entries are KuboDevelop, KuboSecure, and
+KuboOperate, each a separate page. KuboLib is in the home and overview
+source, but that block is hidden at every breakpoint and /kubosuite/kubolib/
+is the public not-found page, so it is not a destination a visitor can open.
 """
 
 from __future__ import annotations
@@ -29,9 +30,6 @@ class ProductEntry:
     expect_path: str
     heading: re.Pattern[str]
     content: re.Pattern[str]
-    # False when the linked URL is not a published page and the overview
-    # section is the visitor-reachable destination.
-    opens_page: bool = True
 
 
 PRODUCTS: tuple[ProductEntry, ...] = (
@@ -55,17 +53,6 @@ PRODUCTS: tuple[ProductEntry, ...] = (
         expect_path="/kubosuite/kubooperate/",
         heading=re.compile(r"^KuboOperate(?:™)?$"),
         content=re.compile(r"move their workloads to the cloud", re.I),
-    ),
-    ProductEntry(
-        id="kubolib",
-        link_name=re.compile(r"^KuboLib(?:™)?$"),
-        expect_path="/kubosuite/kubolib/",
-        heading=re.compile(r"^KuboLib(?:™)?$"),
-        content=re.compile(
-            r"Reusable functions, utility packages and production grade microservices",
-            re.I,
-        ),
-        opens_page=False,
     ),
 )
 
@@ -157,19 +144,11 @@ def test_kubosuite_product_entry(
     product: ProductEntry,
 ) -> None:
     """Open one KuboSuite product from the overview and assert its destination."""
-    if product.opens_page:
-        action = f"from home, open See all KuboSuite Products, then open {product.id}"
-        expectation = (
-            f"page {product.expect_path} shows heading {_label(product.heading)} "
-            f"and content {product.content.pattern!r}, and is not an error page"
-        )
-    else:
-        action = f"from home, open See all KuboSuite Products, then read the {product.id} section"
-        expectation = (
-            f"overview section shows heading {_label(product.heading)} "
-            f"and content {product.content.pattern!r} "
-            f"(link path {product.expect_path} is not a published product page)"
-        )
+    action = f"from home, open See all KuboSuite Products, then open {product.id}"
+    expectation = (
+        f"page {product.expect_path} shows heading {_label(product.heading)} "
+        f"and content {product.content.pattern!r}, and is not an error page"
+    )
 
     page.set_viewport_size(VIEWPORT)
     ctx = _ctx(browser_name, base_url, action, expectation)
@@ -178,28 +157,6 @@ def test_kubosuite_product_entry(
     content = _content(page)
     ctx_overview = _ctx(browser_name, page.url, action, expectation)
     link = _visible_link(content, product.link_name, product.expect_path, ctx_overview)
-
-    if not product.opens_page:
-        expect(
-            link,
-            f"[{ctx_overview}] Expected the {product.id} product entry link to be visible",
-        ).to_be_visible()
-        card = (
-            content.locator("header.bt_bb_headline")
-            .filter(has=page.get_by_role("link", name=product.link_name))
-            .first
-        )
-        expect(
-            card.get_by_role("heading", name=product.heading).first,
-            f"[{ctx_overview}] Expected the {product.id} section heading",
-        ).to_be_visible()
-        expect(
-            card.get_by_text(product.content).first,
-            f"[{ctx_overview}] Expected the {product.id} section content "
-            f"{product.content.pattern!r}",
-        ).to_be_visible()
-        return
-
     _click(link, ctx_overview)
     page.wait_for_load_state("domcontentloaded")
     ctx_after = _ctx(browser_name, page.url, action, expectation)

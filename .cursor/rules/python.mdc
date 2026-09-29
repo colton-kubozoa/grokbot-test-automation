@@ -1,0 +1,39 @@
+---
+description: Python standards for application code and tests
+globs: "**/*.py,pyproject.toml,requirements*.txt"
+alwaysApply: false
+---
+
+# Python
+
+## Baseline
+
+- Target **Python 3.12+**.
+- Put the package under `src/` (for example `src/<package>/`).
+- Prefer `pyproject.toml` for metadata and tool config.
+- Type-annotate public functions. Use `from __future__ import annotations` when it helps.
+- Use `logging` for diagnostics. A CLI may print results to stdout.
+
+## Style
+
+- Follow PEP 8. Format and lint with **ruff** when it is available.
+- Raise explicit exceptions. A CLI exits `2` for misuse and a non-zero code for failure.
+- No bare `except:`. Catch the exceptions you can handle, and let the rest propagate.
+
+```python
+try:
+    load_config(path)
+except FileNotFoundError as exc:
+    raise SystemExit(f"config not found: {path}") from exc
+```
+
+## Testing
+
+- Use **pytest** under `test/`.
+- Name files `test_*.py`. Cover the happy path and the validation or error path the change can break.
+- Keep unit tests deterministic. Do not call the network from a unit test.
+
+## Packaging
+
+- Make the app runnable as `python -m <package>` when it has a CLI.
+- Keep dependencies minimal. Pin them when an image or a release needs a lock.

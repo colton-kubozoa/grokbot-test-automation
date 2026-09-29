@@ -1,0 +1,27 @@
+---
+description: GitHub remotes and pull requests with the gh CLI
+alwaysApply: false
+---
+
+# GitHub
+
+Use this when the project is on GitHub, or when opening or updating a GitHub pull request.
+
+## Pull requests
+
+- Target **`develop`**, or the base branch named on the Issue. Do not target `main` for feature work.
+- Body: a short summary and a test plan.
+- Create it with `gh pr create --base <target>`.
+- Open a **draft** when verification or documentation is still to come.
+- Mark it **Ready for review** when the user asks, or when the documentation for that change is finished.
+- Do not merge unless the user explicitly asks.
+
+## Remote
+
+- Confirm `origin` is the GitHub repository for this work before pushing. The checks are in `git.mdc`.
+- Use `gh` for GitHub. Do not use GitLab merge-request commands on a GitHub repo.
+
+## Tooling
+
+- `gh pr view`, `gh pr create`, `gh pr list`
+- Workflow runs: `github-actions.mdc`

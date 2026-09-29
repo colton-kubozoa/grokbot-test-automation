@@ -1,20 +1,20 @@
 ---
-description: Bash scripts must start with a French comment describing what they do
+description: Bash scripts must start with an English comment describing what they do
 globs: "**/*.sh,**/*.bash"
 alwaysApply: false
 ---
 
 # Bash scripts
 
-Every Bash script must include a comment that states what the script does. Write that comment in **French**.
+Every Bash script must include a comment that states what the script does. Write that comment in **English**.
 
 - Place it immediately after the shebang (or at the top if there is no shebang).
 - One short block is enough: purpose, not a line-by-line walkthrough.
-- Keep code, identifiers, and commit messages in their existing language; only this description comment must be French.
-- When you change what the script does, update the French comment to match.
+- Keep code, identifiers, and commit messages in their existing language; only this description comment must be English.
+- When you change what the script does, update the English comment to match.
 
 ```bash
 #!/usr/bin/env bash
-# Copie cursor/ du framework vers .cursor/ du dépôt produit (écrasement).
+# Copy framework cursor/ into the product repo's .cursor/ (overwrite).
 set -euo pipefail
 ```

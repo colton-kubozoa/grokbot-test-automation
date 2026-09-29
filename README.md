@@ -30,7 +30,10 @@ Override the target site (default `https://www.kubozoa.com/`):
 BASE_URL=https://www.kubozoa.com/ pytest
 ```
 
-The home-page smoke runs once per browser: Chromium, Firefox, and WebKit.
+`pytest` runs the home-page smoke and primary-nav destination flows once per
+browser (Chromium, Firefox, and WebKit). Primary-nav cases cover KuboSuite™ and
+Services (via What we do), Who we are, Join us, Get in touch, and the KuboSuite™
+products overview.
 
 ## Docker
 
@@ -50,7 +53,7 @@ docker run --rm -e BASE_URL=https://www.kubozoa.com/ grokbot-test-automation
 
 ## Layout
 
-- `tests/` — pytest suite and shared Playwright fixtures
+- `tests/` — pytest suite and shared Playwright fixtures (`test_home_smoke.py`, `test_primary_nav.py`)
 - `requirements.txt` — pinned `pytest` and `playwright`
 - `pyproject.toml` — pytest discovery plus ruff/mypy config for CI lint/typecheck
 - `Dockerfile` — container image that installs browsers and runs `pytest`

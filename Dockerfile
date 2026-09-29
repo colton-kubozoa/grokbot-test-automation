@@ -13,5 +13,5 @@ RUN chown -R pwuser:pwuser /app
 
 USER pwuser
 
-# Default entrypoint runs the pytest suite once tests exist under test/.
+# Default entrypoint runs the pytest suite under tests/.
 CMD ["pytest"]

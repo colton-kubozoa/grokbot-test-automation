@@ -1,0 +1,37 @@
+---
+description: GitHub Actions for a Python project
+globs: ".github/workflows/**/*"
+alwaysApply: false
+---
+
+# GitHub Actions
+
+Use this when editing workflow files.
+
+## Python workflow
+
+For a Python app, jobs should cover:
+
+- **lint** — `ruff`
+- **test** — `pytest` on Python 3.12
+- **image** — build and smoke only when the app is containerized (`docker.mdc`)
+
+Add a deploy job only when the Issue names an environment, and keep it manual or protected. On an empty repo, do not make a job a required check when there is nothing for it to run yet.
+
+## Design
+
+- One concern per workflow. Set explicit `on:` triggers.
+- Use `concurrency` to cancel a superseded run on the same ref.
+- Set `timeout-minutes`. Run lint before slow jobs.
+
+## Security
+
+- Pin actions to a full commit SHA, not `@main`.
+- Set least-privilege `permissions:` on each job.
+- Pass secrets with `secrets.*` or `vars.*`. Never print them.
+
+Stay inside the pipeline stage. Do not change application source or `README.md` in a workflow-only change.
+
+## Tooling
+
+- `gh run list` and `gh run view`

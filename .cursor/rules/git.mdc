@@ -1,0 +1,43 @@
+---
+description: Git branching, commits, and push checks for GitHub projects
+alwaysApply: true
+---
+
+# Git
+
+Branching defaults to **gitflow**. GitHub pull requests follow `github-scm.mdc`.
+
+## Branching
+
+- Long-lived: `main` (production), `develop` (integration).
+- Features: `feature/<short-kebab-name>` from `develop`.
+- Fixes: `bugfix/<short-kebab-name>` from `develop`. Use `hotfix/<name>` from `main` only for a production emergency.
+- Releases: `release/x.y.z` from `develop`.
+
+## Commits
+
+Create a commit only when the user, or the handoff for this session, asks for one.
+
+- Do not commit or push straight to `main` or `master`.
+- Do not force-push `develop` or `main`.
+- Do not pass `--no-verify` unless the user explicitly requests it.
+- One concern per commit. The message says **why**.
+
+```
+feat(scope): short summary
+
+Optional body explaining why.
+```
+
+Types: `feat`, `fix`, `docs`, `ci`, `chore`, `refactor`, `test`.
+
+## Remote check
+
+Before the first push or pull request, confirm `origin` is the GitHub repository for this work. Then run, in order:
+
+1. `git remote get-url origin`
+2. `git ls-remote origin` (the repo exists and auth works)
+3. `gh auth status`
+4. `git push --dry-run origin HEAD` when a local branch exists
+
+Stop at the first failure. Say which check failed. Do not commit or push until the user can reach the remote (`gh auth login`, or a token with repo read and write).

@@ -1,0 +1,41 @@
+---
+description: Project conventions for a Python app on GitHub
+alwaysApply: true
+---
+
+# Global Rules
+
+## Agent behavior
+
+- Prefer the **smallest correct change**. Do not refactor unrelated files.
+- **Read before write.** Inspect the surrounding code, tests, and config.
+- Requirements for this session are the GitHub Issue the handoff named, or what the user asked in this chat. Do not read or rewrite `specs/`.
+- Use **English** for code, commits, and docs.
+- **Never commit secrets.** Use environment variables or a secret manager.
+- Leave the tree **buildable and testable**.
+
+## Session scope
+
+Do the stage this session was asked to do. One Cursor chat may cover several stages when the user asked for them. A handoff that names one stage stays inside it.
+
+- **Implementation** — application code and tests. Not pipeline files. Not project docs. Not `specs/`.
+- **Pipeline** — CI workflow files, and a container build only when the app is containerized. Not product features. Not project docs. Not `specs/`.
+- **Documentation** — root `README.md` and `docs/`. Not application features. Not pipeline files. Not `specs/`.
+- **Verification** — run checks and report. Do not implement a fix in that pass unless the user asked. Do not mark a pull request ready. Not `specs/`.
+
+Do not merge a pull request unless the user explicitly asks.
+
+## Layout
+
+- Application code → `src/`
+- Tests → `test/`
+- Requirements → `specs/`
+- Project docs → `docs/`, and root `README.md` when documentation is in scope
+- Data files → `data/`
+- Logs → `logs/` (gitignored)
+
+## Security
+
+- Validate untrusted input at boundaries.
+- Do not log secrets or personal data.
+- Give CI tokens and container users the least privilege that still lets the job run.

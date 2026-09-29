@@ -1,4 +1,4 @@
 # Pinned suite dependencies for CI installs and the container image.
-# Feature tests will land under test/; this file only provides install paths.
+# Feature tests live under tests/; this file provides the install path for pytest + playwright.
 pytest==9.1.1
 playwright==1.63.0

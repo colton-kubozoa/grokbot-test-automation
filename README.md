@@ -1,0 +1,39 @@
+# grokbot-test-automation
+
+Playwright + pytest proof-of-concept suite against the public Kubozoa site
+([https://www.kubozoa.com/](https://www.kubozoa.com/)).
+
+## Local setup
+
+Requires **Python 3.12+**.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+playwright install --with-deps chromium firefox webkit
+```
+
+On systems where OS deps are already present (or inside the Playwright Docker image),
+`playwright install chromium firefox webkit` is enough.
+
+## Run the suite
+
+```bash
+pytest
+```
+
+Override the target site (default `https://www.kubozoa.com/`):
+
+```bash
+BASE_URL=https://www.kubozoa.com/ pytest
+```
+
+The home-page smoke runs once per browser: Chromium, Firefox, and WebKit.
+
+## Layout
+
+- `tests/` — pytest suite and shared Playwright fixtures
+- `requirements.txt` — pinned `pytest` and `playwright`
+- `pyproject.toml` — pytest discovery plus ruff/mypy config for CI lint/typecheck

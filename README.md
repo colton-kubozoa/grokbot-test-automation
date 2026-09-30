@@ -46,6 +46,33 @@ KuboLib™ is omitted because that block is hidden on the live site and
 can open. Footer coverage is in-site only: third-party social profiles and
 hash-only address and email links are not followed.
 
+When the session finishes, case outcomes are in `results/latest.json`.
+What each case covers is listed in `tests/TEST_CASES.md`. Details of the
+results file are below.
+
+## Stored results
+
+`pytest` writes one record per case per browser to `results/latest.json`.
+That file is overwritten at the start of each session. It is the primary path
+for a local demo, the future dashboard, and the CI artifact. Each suite
+invocation also keeps a copy at `results/runs/<run-id>.json`.
+
+Live output under `results/` is gitignored. `results/sample.json` is the
+committed example of the file shape. It is not a live run.
+
+The file is a JSON object, schema version 1, with:
+
+- `schema_version`
+- `run` — `id`, `started_at`, `finished_at`, and `status`
+  (`in_progress`, `finished`, or `interrupted`)
+- `target` — site root under test (`BASE_URL`)
+- `records` — one object per case per browser
+
+The module docstring in `tests/result_store.py` is the in-repo source of truth
+for the full field list. These paths are written at the pytest root (the
+repository when you run `pytest` locally). `docker run --rm` writes them inside
+the container.
+
 ## Docker
 
 The `Dockerfile` uses the official Playwright Python image, installs pinned deps and
@@ -65,6 +92,10 @@ docker run --rm -e BASE_URL=https://www.kubozoa.com/ grokbot-test-automation
 ## Layout
 
 - `tests/` — pytest suite and shared Playwright fixtures (`test_home_smoke.py`, `test_primary_nav.py`, `test_cta_scroll.py`, `test_kubosuite_products.py`, `test_footer_destinations.py`)
+- `tests/result_store.py` — writes suite outcomes to `results/latest.json`; its module docstring is the schema source of truth
+- `tests/test_result_store.py` — unit tests for the result writer (no browser and no network)
+- `tests/TEST_CASES.md` — inventory of suite cases and what pass or fail means
+- `results/` — `sample.json` is a committed example of the results file. Live output (`latest.json` and `runs/<run-id>.json`) is gitignored
 - `requirements.txt` — pinned `pytest` and `playwright`
 - `pyproject.toml` — pytest discovery plus ruff/mypy config for CI lint/typecheck
 - `Dockerfile` — container image that installs browsers and runs `pytest`

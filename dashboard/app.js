@@ -1,18 +1,20 @@
 (function () {
   "use strict";
 
-  var app = document.querySelector("#app");
+  var dom = window.document;
+  var app = dom.querySelector("#app");
   var LATEST = "/results/latest.json";
   var SAMPLE = "/results/sample.json";
   var LATEST_LABEL = "results/latest.json";
   var SAMPLE_LABEL = "results/sample.json";
+  var activeLabel = LATEST_LABEL;
 
   load().catch(function (error) {
-    renderError(LATEST_LABEL, "The dashboard could not load results. " + error.message);
+    renderError(activeLabel, "The dashboard could not load results. " + error.message);
   });
 
   function markCurrentSource(label) {
-    var links = document.querySelectorAll(".sources a");
+    var links = dom.querySelectorAll(".sources a");
     for (var i = 0; i < links.length; i += 1) {
       links[i].removeAttribute("aria-current");
       var href = links[i].getAttribute("href") || "";
@@ -54,6 +56,7 @@
   async function load() {
     var requested = requestedFile();
     if (requested === null) {
+      activeLabel = LATEST_LABEL;
       await loadDefault();
       return;
     }
@@ -62,6 +65,7 @@
       return;
     }
     var source = explicitSource(requested);
+    activeLabel = source ? source.label : requested;
     if (!source) {
       renderError(
         requested,
@@ -87,6 +91,7 @@
       renderProblem(LATEST_LABEL, latest.problem);
       return;
     }
+    activeLabel = SAMPLE_LABEL;
     var sample = await readSource(SAMPLE, SAMPLE_LABEL);
     if (!sample.ok) {
       renderProblem(LATEST_LABEL, {
@@ -253,26 +258,26 @@
     clear(app);
     markCurrentSource(label);
     app.appendChild(banner("banner-error", title, label + ": " + problem.message));
-    var note = document.createElement("p");
+    var note = dom.createElement("p");
     note.className = "hint";
     note.textContent =
       "No pass or fail list is shown for this file. Fix the file, or open Latest run or Sample file.";
     app.appendChild(note);
-    document.title = "Browser test results — " + title;
+    dom.title = "Browser test results — " + title;
   }
 
   function renderError(label, message) {
     renderProblem(label, { state: "invalid", message: message });
   }
 
-  function renderDocument(label, document, notice) {
+  function renderDocument(label, result, notice) {
     clear(app);
     markCurrentSource(label);
     if (notice) {
       app.appendChild(banner("banner-info", "Sample fallback", notice));
     }
 
-    var records = document.records;
+    var records = result.records;
     var passed = 0;
     var failed = 0;
     for (var i = 0; i < records.length; i += 1) {
@@ -283,7 +288,7 @@
       }
     }
 
-    app.appendChild(runMeta(label, document));
+    app.appendChild(runMeta(label, result));
     app.appendChild(counts(records.length, passed, failed));
 
     if (failed > 0) {
@@ -298,55 +303,54 @@
     }
 
     if (records.length === 0) {
-      var empty = document.createElement("section");
+      var empty = dom.createElement("section");
       empty.className = "panel empty-state";
-      var heading = document.createElement("h2");
+      var heading = dom.createElement("h2");
       heading.textContent = "No case results";
-      var copy = document.createElement("p");
+      var copy = dom.createElement("p");
       copy.textContent =
         "This file has no case × browser records. Nothing passed or failed. This is not a passing run.";
       empty.appendChild(heading);
       empty.appendChild(copy);
       app.appendChild(empty);
-      document.title = "Browser test results — no records";
+      dom.title = "Browser test results — no records";
       return;
     }
 
-    var list = document.createElement("div");
+    var list = dom.createElement("div");
     list.className = "records";
     for (var index = 0; index < records.length; index += 1) {
       list.appendChild(recordCard(records[index], index));
     }
     app.appendChild(list);
-    document.title =
-      "Browser test results — " + passed + " pass, " + failed + " fail";
+    dom.title = "Browser test results — " + passed + " pass, " + failed + " fail";
   }
 
-  function runMeta(label, document) {
-    var run = document.run;
-    var dl = document.createElement("dl");
+  function runMeta(label, result) {
+    var run = result.run;
+    var dl = dom.createElement("dl");
     dl.className = "run-meta";
     appendMeta(dl, "File", label);
     appendMeta(dl, "Run", textOrDash(run.id));
     appendMeta(dl, "Run status", textOrDash(run.status));
     appendMeta(dl, "Finished", textOrDash(run.finished_at));
-    appendMeta(dl, "Target", textOrDash(document.target));
+    appendMeta(dl, "Target", textOrDash(result.target));
     return dl;
   }
 
   function appendMeta(dl, name, value) {
-    var dt = document.createElement("dt");
+    var dt = dom.createElement("dt");
     dt.textContent = name;
-    var dd = document.createElement("dd");
+    var dd = dom.createElement("dd");
     dd.textContent = value;
-    var wrap = document.createElement("div");
+    var wrap = dom.createElement("div");
     wrap.appendChild(dt);
     wrap.appendChild(dd);
     dl.appendChild(wrap);
   }
 
   function counts(total, passed, failed) {
-    var row = document.createElement("p");
+    var row = dom.createElement("p");
     row.className = "counts";
     row.appendChild(chip("count", total + (total === 1 ? " record" : " records")));
     row.appendChild(chip("count count-pass", passed + " pass"));
@@ -355,7 +359,7 @@
   }
 
   function chip(className, text) {
-    var span = document.createElement("span");
+    var span = dom.createElement("span");
     span.className = className;
     span.textContent = text;
     return span;
@@ -363,29 +367,29 @@
 
   function recordCard(record, index) {
     var failed = record.status === "fail";
-    var article = document.createElement("article");
+    var article = dom.createElement("article");
     article.className = "record " + (failed ? "record-fail" : "record-pass");
     article.id = "record-" + index;
 
-    var head = document.createElement("div");
+    var head = dom.createElement("div");
     head.className = "record-head";
 
-    var status = document.createElement("p");
+    var status = dom.createElement("p");
     status.className = "status " + (failed ? "status-fail" : "status-pass");
     status.textContent = failed ? "Fail" : "Pass";
 
-    var body = document.createElement("div");
+    var body = dom.createElement("div");
     body.className = "record-body";
 
-    var caseId = document.createElement("h2");
+    var caseId = dom.createElement("h2");
     caseId.className = "case-id";
     caseId.textContent = record.case_id;
 
-    var browser = document.createElement("p");
+    var browser = dom.createElement("p");
     browser.className = "browser";
     browser.textContent = "Browser: " + record.browser;
 
-    var description = document.createElement("p");
+    var description = dom.createElement("p");
     description.className = "description";
     description.textContent = record.description;
 
@@ -404,18 +408,18 @@
 
   function failureDetails(record, index) {
     var context = record.context;
-    var button = document.createElement("button");
+    var button = dom.createElement("button");
     button.type = "button";
     button.className = "toggle";
     button.setAttribute("aria-expanded", "false");
     button.setAttribute("aria-controls", "failure-" + index);
     button.textContent = "Show failure details";
 
-    var panel = document.createElement("div");
+    var panel = dom.createElement("div");
     panel.id = "failure-" + index;
     panel.hidden = true;
 
-    var dl = document.createElement("dl");
+    var dl = dom.createElement("dl");
     dl.className = "context";
     appendContext(dl, "Browser", record.browser, false);
     appendContext(dl, "URL", context.url, false);
@@ -431,7 +435,7 @@
       panel.hidden = open;
     });
 
-    var wrap = document.createElement("div");
+    var wrap = dom.createElement("div");
     wrap.className = "details";
     wrap.appendChild(button);
     wrap.appendChild(panel);
@@ -439,16 +443,16 @@
   }
 
   function appendContext(dl, name, value, isFailure) {
-    var dt = document.createElement("dt");
+    var dt = dom.createElement("dt");
     dt.textContent = name;
-    var dd = document.createElement("dd");
+    var dd = dom.createElement("dd");
     if (isFailure) {
       dd.className = "failure-message";
     }
     if (name === "URL") {
       var href = httpUrl(value);
       if (href) {
-        var link = document.createElement("a");
+        var link = dom.createElement("a");
         link.href = href;
         link.textContent = value;
         dd.appendChild(link);
@@ -475,12 +479,12 @@
   }
 
   function banner(className, title, message) {
-    var box = document.createElement("section");
+    var box = dom.createElement("section");
     box.className = "banner " + className;
     box.setAttribute("role", className.indexOf("error") === -1 ? "status" : "alert");
-    var heading = document.createElement("h2");
+    var heading = dom.createElement("h2");
     heading.textContent = title;
-    var copy = document.createElement("p");
+    var copy = dom.createElement("p");
     copy.textContent = message;
     box.appendChild(heading);
     box.appendChild(copy);

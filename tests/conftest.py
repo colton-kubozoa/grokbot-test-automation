@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-import os
 from collections.abc import Generator
 
 import pytest
 from playwright.sync_api import Browser, Page, Playwright, sync_playwright
 
-DEFAULT_BASE_URL = "https://www.kubozoa.com/"
+pytest_plugins = ["result_store"]
+
 BROWSER_NAMES = ("chromium", "firefox", "webkit")
 DEFAULT_TIMEOUT_MS = 15_000
 
@@ -22,9 +22,10 @@ def pytest_configure(config: pytest.Config) -> None:
 
 @pytest.fixture(scope="session")
 def base_url() -> str:
-    """Configurable site root; override with BASE_URL (defaults to kubozoa.com)."""
-    raw = os.environ.get("BASE_URL", DEFAULT_BASE_URL).strip() or DEFAULT_BASE_URL
-    return raw if raw.endswith("/") else f"{raw}/"
+    """Site root under test. Set BASE_URL; default is https://www.kubozoa.com/."""
+    from result_store import resolve_target
+
+    return resolve_target()
 
 
 @pytest.fixture(scope="session")

@@ -5,3 +5,7 @@ __pycache__/
 venv/
 .mypy_cache/
 .ruff_cache/
+
+# Live suite output. results/sample.json is a committed example of the schema.
+results/*
+!results/sample.json

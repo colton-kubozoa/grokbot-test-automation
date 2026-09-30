@@ -15,6 +15,8 @@ from urllib.parse import urlparse
 import pytest
 from playwright.sync_api import Locator, Page, ViewportSize, expect
 
+from result_store import CaseNote
+
 KUBOSUITE_HEADING = re.compile(r"^KuboSuite(?:™)?$", re.I)
 SEE_ALL_PRODUCTS = re.compile(r"^See all KuboSuite(?:™)? Products$")
 OVERVIEW_PATH = "/kubosuite/"
@@ -142,6 +144,7 @@ def test_kubosuite_product_entry(
     base_url: str,
     browser_name: str,
     product: ProductEntry,
+    case_note: CaseNote,
 ) -> None:
     """Open one KuboSuite product from the overview and assert its destination."""
     action = f"from home, open See all KuboSuite Products, then open {product.id}"
@@ -149,6 +152,7 @@ def test_kubosuite_product_entry(
         f"page {product.expect_path} shows heading {_label(product.heading)} "
         f"and content {product.content.pattern!r}, and is not an error page"
     )
+    case_note.set(action=action, expectation=expectation)
 
     page.set_viewport_size(VIEWPORT)
     ctx = _ctx(browser_name, base_url, action, expectation)

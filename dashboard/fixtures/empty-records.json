@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "run": {
+    "id": "empty-fixture",
+    "started_at": "2026-09-30T17:00:00Z",
+    "finished_at": "2026-09-30T17:00:01Z",
+    "status": "finished"
+  },
+  "target": "https://www.kubozoa.com/",
+  "records": []
+}

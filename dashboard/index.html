@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Browser test results</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!--
+      Local open (file:// cannot fetch JSON):
+        python dashboard/serve.py
+        http://127.0.0.1:8765/dashboard/
+      Default file: results/latest.json. If that file is missing, the page
+      falls back to results/sample.json and says so. Choose a file with
+      ?file=latest, ?file=sample, or ?file=results/sample.json.
+      This page only reads JSON. It does not run pytest or launch a browser.
+    -->
+    <header class="top">
+      <p class="eyebrow">Kubozoa browser suite</p>
+      <h1>Test results</h1>
+      <p class="lede">
+        One row per case and browser, read from the stored results file. This
+        page does not re-run tests or write results.
+      </p>
+    </header>
+
+    <nav class="sources" aria-label="Result file">
+      <a href="?file=latest">Latest run</a>
+      <a href="?file=sample">Sample file</a>
+    </nav>
+
+    <details class="previews">
+      <summary>Preview a missing, empty, or invalid file</summary>
+      <nav aria-label="File problem examples">
+        <a href="?file=results/missing.json">Missing file</a>
+        <a href="?file=dashboard/fixtures/empty.json">Empty file</a>
+        <a href="?file=dashboard/fixtures/invalid.json">Invalid JSON</a>
+        <a href="?file=dashboard/fixtures/bare-array.json">Bare array</a>
+        <a href="?file=dashboard/fixtures/empty-records.json">No records</a>
+      </nav>
+    </details>
+
+    <main id="app" aria-live="polite">
+      <p class="loading">Loading results…</p>
+    </main>
+
+    <noscript>
+      <p class="banner banner-error" role="alert">
+        JavaScript is required to read the results file. The dashboard still
+        does not run tests.
+      </p>
+    </noscript>
+
+    <script src="app.js"></script>
+  </body>
+</html>

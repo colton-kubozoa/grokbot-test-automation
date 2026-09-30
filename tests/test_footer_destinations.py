@@ -9,6 +9,8 @@ from urllib.parse import urlparse
 import pytest
 from playwright.sync_api import Locator, Page, ViewportSize, expect
 
+from result_store import CaseNote
+
 VIEWPORT: ViewportSize = {"width": 1280, "height": 720}
 KUBOSUITE_HEADING = re.compile(r"^KuboSuite(?:™)?$", re.I)
 
@@ -155,6 +157,7 @@ def test_footer_destination_from_home(
     base_url: str,
     browser_name: str,
     destination: FooterDestination,
+    case_note: CaseNote,
 ) -> None:
     """Follow one home-page footer link and assert the destination is usable."""
     action = f"from the home footer, open {destination.id}"
@@ -162,6 +165,7 @@ def test_footer_destination_from_home(
         f"page {destination.expect_path} shows heading {_label(destination.heading)} "
         f"and content {destination.content.pattern!r}, and is not an error page"
     )
+    case_note.set(action=action, expectation=expectation)
     page.set_viewport_size(VIEWPORT)
     ctx = _ctx(browser_name, base_url, action, expectation)
 

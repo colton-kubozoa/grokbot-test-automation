@@ -6,6 +6,8 @@ import re
 
 from playwright.sync_api import Page, expect
 
+from result_store import CaseNote
+
 NAV_LABELS = ("What we do", "Who we are", "Join us", "Get in touch")
 HERO_HEADING = re.compile(r"Cloud Native\.?\s*Streamlined\.?\s*Simplified", re.I)
 
@@ -15,9 +17,17 @@ def _ctx(browser_name: str, url: str) -> str:
 
 
 def test_home_page_loads_with_key_content(
-    page: Page, base_url: str, browser_name: str
+    page: Page, base_url: str, browser_name: str, case_note: CaseNote
 ) -> None:
     """Open home in the current browser and assert branding, nav, and a main section."""
+    case_note.set(
+        action="open the home page",
+        expectation=(
+            "HTTP success, the title and logo show Kubozoa, primary nav links "
+            "What we do, Who we are, Join us, and Get in touch are visible, and the "
+            "hero heading Cloud Native. Streamlined. Simplified is visible"
+        ),
+    )
     url = base_url
     ctx = _ctx(browser_name, url)
     response = page.goto(url, wait_until="domcontentloaded")

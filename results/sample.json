@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "run": {
+    "id": "sample",
+    "started_at": "2026-09-30T17:00:00Z",
+    "finished_at": "2026-09-30T17:05:00Z",
+    "status": "finished"
+  },
+  "target": "https://www.kubozoa.com/",
+  "records": [
+    {
+      "run": {
+        "id": "sample",
+        "finished_at": "2026-09-30T17:05:00Z"
+      },
+      "recorded_at": "2026-09-30T17:00:01Z",
+      "browser": "chromium",
+      "case_id": "tests/test_home_smoke.py::test_home_page_loads_with_key_content[chromium]",
+      "description": "open the home page; expected: HTTP success, the title and logo show Kubozoa, primary nav links What we do, Who we are, Join us, and Get in touch are visible, and the hero heading Cloud Native. Streamlined. Simplified is visible",
+      "status": "pass",
+      "target": "https://www.kubozoa.com/",
+      "context": {
+        "url": "https://www.kubozoa.com/",
+        "action": "open the home page",
+        "expectation": "HTTP success, the title and logo show Kubozoa, primary nav links What we do, Who we are, Join us, and Get in touch are visible, and the hero heading Cloud Native. Streamlined. Simplified is visible",
+        "assertion_message": null
+      }
+    },
+    {
+      "run": {
+        "id": "sample",
+        "finished_at": "2026-09-30T17:05:00Z"
+      },
+      "recorded_at": "2026-09-30T17:00:02Z",
+      "browser": "firefox",
+      "case_id": "tests/test_home_smoke.py::test_home_page_loads_with_key_content[firefox]",
+      "description": "open the home page; expected: HTTP success, the title and logo show Kubozoa, primary nav links What we do, Who we are, Join us, and Get in touch are visible, and the hero heading Cloud Native. Streamlined. Simplified is visible",
+      "status": "fail",
+      "target": "https://www.kubozoa.com/",
+      "context": {
+        "url": "https://www.kubozoa.com/",
+        "action": "open the home page",
+        "expectation": "HTTP success, the title and logo show Kubozoa, primary nav links What we do, Who we are, Join us, and Get in touch are visible, and the hero heading Cloud Native. Streamlined. Simplified is visible",
+        "assertion_message": "Expected Kubozoa branding logo (img alt='Kubozoa') to be visible"
+      }
+    }
+  ]
+}

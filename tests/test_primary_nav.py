@@ -10,6 +10,8 @@ from urllib.parse import urljoin
 import pytest
 from playwright.sync_api import Locator, Page, expect
 
+from result_store import CaseNote
+
 # Match visible visitor labels; ™ may be present or omitted in accessible names.
 KUBOSUITE_NAME = re.compile(r"KuboSuite(?:™)?", re.I)
 SEE_ALL_PRODUCTS = re.compile(r"See all KuboSuite(?:™)? Products", re.I)
@@ -128,10 +130,12 @@ def test_primary_nav_destination(
     base_url: str,
     browser_name: str,
     destination: NavDestination,
+    case_note: CaseNote,
 ) -> None:
     """From home, follow one primary-nav / in-site link and assert destination content."""
     home = base_url
     expectation = _heading_expectation(destination.heading)
+    case_note.set(action=destination.action, expectation=expectation)
     ctx = _ctx(browser_name, home, destination.action, expectation)
 
     response = page.goto(home, wait_until="domcontentloaded")

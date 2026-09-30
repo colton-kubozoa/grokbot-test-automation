@@ -9,6 +9,8 @@ from urllib.parse import urljoin
 import pytest
 from playwright.sync_api import Locator, Page, ViewportSize, expect
 
+from result_store import CaseNote
+
 # Home hero; shared with the smoke test so a layout shift fails in the same place.
 HERO_HEADING = re.compile(r"Cloud Native\.?\s*Streamlined\.?\s*Simplified", re.I)
 KUBOSUITE_HEADING = re.compile(r"^KuboSuite(?:™)?$", re.I)
@@ -284,9 +286,11 @@ def test_home_cta_reaches_expected_content(
     base_url: str,
     browser_name: str,
     cta: HomeCta,
+    case_note: CaseNote,
 ) -> None:
     """Follow one home-page CTA and assert the destination loaded with expected content."""
     expectation = f"{_heading_label(cta.heading)} and content matching {cta.content.pattern!r}"
+    case_note.set(action=cta.action, expectation=expectation)
     ctx = _ctx(browser_name, base_url, cta.action, expectation)
     _load_home(page, base_url, ctx)
 
@@ -316,12 +320,14 @@ def test_home_scroll_reaches_below_the_fold(
     page: Page,
     base_url: str,
     browser_name: str,
+    case_note: CaseNote,
 ) -> None:
     """Scroll the long home page until below-the-fold sections are actually in view."""
     action = "scroll home page through below-the-fold sections"
     expectation = (
         f"heading {READY_TO_START!r} enters the viewport after {WHY_CHOOSE.pattern!r} is reached"
     )
+    case_note.set(action=action, expectation=expectation)
     ctx = _ctx(browser_name, base_url, action, expectation)
     page.set_viewport_size(VIEWPORT)
     _load_home(page, base_url, ctx)

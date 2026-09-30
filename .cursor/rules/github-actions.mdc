@@ -16,7 +16,7 @@ For a Python app, jobs should cover:
 - **test** — `pytest` on Python 3.12
 - **image** — build and smoke only when the app is containerized (`docker.mdc`)
 
-Add a deploy job only when the Issue names an environment, and keep it manual or protected. On an empty repo, do not make a job a required check when there is nothing for it to run yet.
+Add a deploy job only when the Issue names an environment, and keep it manual or protected. On an empty repo, when a job has nothing to run yet, make that job exit 0 and report that it had nothing to run. Do not make it a required check until a later change adds the files it runs. When those files exist, the job runs them and a real failure stays red.
 
 ## Design
 

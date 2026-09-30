@@ -16,7 +16,7 @@ description: Create or update GitHub Actions for a Python project. Use when the 
 3. Keep secrets out of YAML. Use GitHub secrets and variables.
 4. Do not add `.gitlab-ci.yml`.
 5. Do not add a deploy job unless the Issue names an environment.
-6. On an empty repo, leave jobs that have nothing to run as non-required checks.
+6. On an empty repo, a job that has nothing to run yet exits 0, reports that it had nothing to run, and is not a required check. When the files it needs exist, the job runs them and a real failure stays red.
 
 ## Do not
 

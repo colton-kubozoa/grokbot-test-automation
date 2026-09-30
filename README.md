@@ -54,7 +54,7 @@ results file are below.
 
 `pytest` writes one record per case per browser to `results/latest.json`.
 That file is overwritten at the start of each session. It is the primary path
-for a local demo, the future dashboard, and the CI artifact. Each suite
+for a local demo, the dashboard, and the CI artifact. Each suite
 invocation also keeps a copy at `results/runs/<run-id>.json`.
 
 Live output under `results/` is gitignored. `results/sample.json` is the
@@ -72,6 +72,33 @@ The module docstring in `tests/result_store.py` is the in-repo source of truth
 for the full field list. These paths are written at the pytest root (the
 repository when you run `pytest` locally). `docker run --rm` writes them inside
 the container.
+
+## Dashboard
+
+A static page reads one schema version 1 results file and lists every case ×
+browser with pass or fail. A failed row expands to the browser, URL, action,
+expectation, and failure message. The page does not write JSON, re-run tests,
+or launch browsers.
+
+Opening `dashboard/index.html` with `file://` cannot fetch local JSON. From
+the repository root:
+
+```bash
+python dashboard/serve.py
+```
+
+Then open [http://127.0.0.1:8765/dashboard/](http://127.0.0.1:8765/dashboard/).
+
+The default file is `results/latest.json`. If that file is missing (HTTP 404
+only), the page falls back to `results/sample.json` and says so. `?file=latest`,
+`?file=sample`, or `?file=results/sample.json` selects a file. An invalid or
+empty `latest.json` is not replaced by the sample. A valid file with zero
+records shows an empty state, not a passing run.
+
+`dashboard/fixtures/` holds empty, invalid, and zero-record files for the
+page's preview links. A missing-file preview requests a path that is not in
+the repo. `tests/test_dashboard_server.py` checks that the local server serves
+the dashboard and results JSON and refuses other repository files.
 
 ## Docker
 
@@ -96,6 +123,8 @@ docker run --rm -e BASE_URL=https://www.kubozoa.com/ grokbot-test-automation
 - `tests/test_result_store.py` — unit tests for the result writer (no browser and no network)
 - `tests/TEST_CASES.md` — inventory of suite cases and what pass or fail means
 - `results/` — `sample.json` is a committed example of the results file. Live output (`latest.json` and `runs/<run-id>.json`) is gitignored
+- `dashboard/` — static test-results page and `serve.py`, which serves it on localhost
+- `tests/test_dashboard_server.py` — checks the dashboard server allowlist
 - `requirements.txt` — pinned `pytest` and `playwright`
 - `pyproject.toml` — pytest discovery plus ruff/mypy config for CI lint/typecheck
 - `Dockerfile` — container image that installs browsers and runs `pytest`
